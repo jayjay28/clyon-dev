@@ -3,114 +3,387 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Loose Ends — the open loops in your head, closed</title>
-<meta name="description" content="Loose Ends reads your own mail and messages on your own Mac, finds the threads you dropped, and hands them back to your phone. There is no Loose Ends cloud.">
+<title>Loose Ends — every “I’ll get back to you,” handed back</title>
+<meta name="description" content="Loose Ends reads the messages and mail already on your Mac, notices what you promised, works on it in the background, and hands it back to your phone. You never type a task. There is no Loose Ends cloud.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<script>document.documentElement.classList.add('js')</script>
 <style>
+  /* Tokens are the app's (ios/Lifeline/Views/Theme.swift). System fonts only:
+     a privacy product shouldn't hand every visitor's IP to a font CDN. */
   :root {
-    --paper: #faf8f4; --card: #ffffff; --chip: #efeadf;
-    --ink: #302d28; --soft: #6b6459; --ghost: #b5aea1;
-    --brand: #1f6157; --brand-soft: rgba(31,97,87,.09);
-    --rule: #e7e2d8;
+    --paper: #F6F1E7; --card: #FBF7EF; --chip: #EDE6D8;
+    --ink: #211E19; --soft: #5A5348; --faint: #6B6357; --ghost: #857C6E;
+    --rule: #DCD5C6; --brand: #1F6157; --on-brand: #FBF7EF; --alert: #A84124;
+    --plum: #7A4062; --plum-soft: rgba(122,64,98,.10); --sage: #5B7A4F; --sage-soft: rgba(91,122,79,.12);
+    --bubble: #E6E2DA; --notif: #EDE7DB;
     --serif: ui-serif, "New York", Charter, Georgia, serif;
     --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --paper: #161513; --card: #1e1c19; --chip: #26231e;
-      --ink: #ece7dd; --soft: #a69c8c; --ghost: #736b60;
-      --brand: #6fb3a5; --brand-soft: rgba(111,179,165,.12);
-      --rule: #302d28;
+      --paper: #161513; --card: #1E1C19; --chip: #26231E;
+      --ink: #ECE7DD; --soft: #A69C8C; --faint: #8F867A; --ghost: #736B60;
+      --rule: #302D28; --brand: #6FB3A5; --on-brand: #10201D; --alert: #E0785A;
+      --plum: #C189A8; --plum-soft: rgba(193,137,168,.14); --sage: #9CBE8F; --sage-soft: rgba(156,190,143,.14);
+      --bubble: #2B2925; --notif: #221F1C;
     }
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--paper); color: var(--ink);
-    font-family: var(--sans); font-size: 16px; line-height: 1.65;
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--brand); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+
+  /* One column with a wide left gutter: the loose end runs down it. */
+  .page { position: relative; overflow-x: clip; }
+  .col { max-width: 760px; margin: 0 auto; padding: 0 44px 0 104px; }
+
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; }
+  .wordmark { font: 600 21px/1 var(--serif); letter-spacing: -.012em; color: var(--ink); }
+  a.wordmark:hover { text-decoration: none; }
+  .links { display: flex; align-items: center; gap: 22px; font-size: 14px; }
+  .links a:not(.pill) { color: var(--soft); }
+  .pill { display: inline-flex; align-items: center; font: 600 14px/1 var(--sans); padding: 10px 18px; border-radius: 100px; background: var(--brand); color: var(--on-brand); white-space: nowrap; }
+  .pill:hover { text-decoration: none; filter: brightness(1.08); }
+  .pill.big { font-size: 16px; padding: 14px 24px; }
+
+  .hero { padding: 36px 0 72px; }
+  .hero-mark { margin-bottom: 26px; }
+  .hero-mark .spiral { width: 76px; height: 76px; color: var(--ink); }
+  .headline { font: 600 58px/1.04 var(--serif); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  .headline em { font-style: italic; font-weight: 500; }
+  .lede { font-size: 19px; line-height: 1.55; color: var(--soft); max-width: 33em; margin: 22px 0 0; }
+  .ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 30px; }
+  .ctas .alt { font-weight: 600; font-size: 15px; }
+  .quiet { font-size: 13.5px; color: var(--faint); margin: 20px 0 0; }
+
+  /* The mark: AnimatedLogo.swift's path and timing. */
+  .spiral { display: block; overflow: visible; }
+  .spiral .t { fill: none; stroke: currentColor; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .spiral .d { fill: var(--alert); transform-box: fill-box; transform-origin: center; }
+  .hero-mark .t { animation: le-draw 1.5s cubic-bezier(.42,0,.58,1) both; }
+  .hero-mark .d { animation: le-pop .55s cubic-bezier(.34,1.56,.64,1) 1.2s both; }
+  .threaded .hero-mark .d { display: none; }   /* the thread's dot takes over */
+  .thread { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+  .thread path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+  .thread circle { fill: var(--alert); transform-box: fill-box; transform-origin: center; }
+  .thread circle.pop { animation: le-pop .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes le-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes le-pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .hero-mark .t, .hero-mark .d, .thread circle.pop { animation: none; } }
+
+  .sec { padding: 76px 0 0; }
+  .sec h2 { font: 600 32px/1.12 var(--serif); letter-spacing: -.012em; margin: 0 0 14px; text-wrap: balance; max-width: 20ch; }
+  .sec p:not([class]) { color: var(--soft); max-width: 35em; margin: 0 0 14px; font-size: 16.5px; }
+  .sec p strong { color: var(--ink); font-weight: 600; }
+  .sec p.cap { font-size: 13.5px; color: var(--faint); max-width: 35em; margin: 0 0 14px; }
+  .sample { font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 26px 0 12px; }
+
+  .ev { display: grid; grid-template-columns: minmax(0,1fr) 40px minmax(0,1fr); align-items: center; gap: 18px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 24px 0; }
+  .who { font-size: 12px; color: var(--faint); margin: 0 0 6px 4px; }
+  .bubble { background: var(--bubble); color: var(--ink); border-radius: 19px 19px 19px 6px; padding: 10px 15px; font-size: 15px; line-height: 1.42; max-width: 30ch; }
+  .arrow { color: var(--ghost); justify-self: center; display: block; }
+  .row-t { font: 600 19px/1.25 var(--serif); margin: 0; }
+  .row-s { font-size: 14px; color: var(--soft); margin: 4px 0 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .chip { font: 600 12px/1 var(--sans); padding: 5px 8px; border-radius: 6px; background: var(--chip); color: var(--soft); }
+  .chip.due { color: var(--alert); }
+  .prov { font-size: 12px; color: var(--faint); }
+
+  /* A move: the one container the app still gives a fill. */
+  .move { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 22px; max-width: 540px; }
+  .move-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .status { font: 600 10.5px/1 var(--sans); letter-spacing: .07em; text-transform: uppercase; padding: 5px 7px; border-radius: 5px; white-space: nowrap; }
+  .status.you { color: var(--plum); background: var(--plum-soft); }
+  .status.done { color: var(--sage); background: var(--sage-soft); }
+  .kind { font: 600 10.5px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 18px 0 6px; }
+  .move h3 { font: 600 22px/1.2 var(--serif); margin: 0 0 12px; text-wrap: balance; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .steps li { display: grid; grid-template-columns: 5px 1fr; gap: 10px; align-items: start; font-size: 14px; color: var(--soft); line-height: 1.45; }
+  .steps li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--brand); margin-top: .55em; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); margin: 16px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .facts div { padding: 10px 0; }
+  .facts dt { font-size: 12px; color: var(--faint); }
+  .facts dd { margin: 2px 0 0; font: 600 17px/1.2 var(--sans); font-variant-numeric: tabular-nums; }
+  .ask { font-size: 15px; color: var(--ink); margin: 0 0 12px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice { font: 600 13.5px/1 var(--sans); color: var(--brand); border: 1.5px solid var(--brand); border-radius: 100px; padding: 8px 14px; }
+  .choice.fill { background: var(--brand); color: var(--on-brand); }
+  .receipt { font-size: 12px; color: var(--faint); margin: 14px 0 0; }
+  .closure { border-top: 1px solid var(--rule); padding: 18px 0 0; max-width: 540px; margin-top: 28px; }
+  .closure .steps li::before { background: var(--sage); }
+  .closure .choices { margin-top: 14px; }
+
+  .buzz { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 28px 40px; align-items: start; }
+  .notifs { display: grid; gap: 14px; padding-top: 6px; }
+  .rulelbl { font: 500 10.5px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--faint); margin: 0 0 6px 4px; }
+  .notif { display: grid; grid-template-columns: 38px minmax(0,1fr); gap: 11px; background: var(--notif); border-radius: 18px; padding: 11px 14px 12px 11px; }
+  .notif img { width: 38px; height: 38px; border-radius: 9px; display: block; }
+  .notif .hd { display: flex; justify-content: space-between; font-size: 12px; color: var(--faint); line-height: 1.2; }
+  .notif .nt { font-weight: 600; font-size: 14.5px; line-height: 1.3; margin: 3px 0 1px; }
+  .notif .nb { font-size: 14px; line-height: 1.35; color: var(--soft); margin: 0; }
+
+  .payload { font: 13px/1.65 var(--mono); background: var(--chip); border-radius: 10px; padding: 16px 18px; margin: 18px 0 10px; overflow-x: auto; max-width: 540px; color: var(--ink); }
+  .payload .c { color: var(--faint); }
+  .payload .s { color: var(--brand); }
+
+  .install-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin: 22px 0 8px; }
+  .iphone { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); }
+  .iphone img { width: 44px; height: 44px; border-radius: 10px; display: block; }
+  .iphone span { display: grid; line-height: 1.3; font-size: 14px; font-weight: 600; }
+  .iphone small { color: var(--faint); font-size: 12.5px; font-weight: 400; }
+  ol.how { list-style: none; counter-reset: s; margin: 28px 0 0; padding: 0; display: grid; gap: 18px; max-width: 35em; }
+  ol.how li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; column-gap: 12px; color: var(--soft); font-size: 15.5px; }
+  ol.how li::before { content: counter(s); font: italic 500 24px/1 var(--serif); color: var(--brand); grid-row: span 2; padding-top: 1px; }
+  ol.how b { color: var(--ink); font-weight: 600; }
+
+  .foot { margin-top: 96px; border-top: 1px solid var(--rule); padding: 26px 0 44px; display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--faint); }
+  .lockup { display: inline-flex; align-items: center; gap: 10px; }
+  .foot .spiral { width: 24px; height: 24px; color: var(--ink); }
+  .foot .wordmark { font-size: 16px; }
+  .foot .links { gap: 18px; flex-wrap: wrap; }
+  .foot .dev { flex-basis: 100%; font-size: 13.5px; }
+
+  @media (max-width: 620px) {
+    .col { padding: 0 22px 0 50px; }
+    .links a:not(.pill) { display: none; }
+    .foot .links a:not(.pill) { display: inline; }
+    .hero { padding: 24px 0 56px; }
+    .hero-mark .spiral { width: 60px; height: 60px; }
+    .headline { font-size: 40px; }
+    .lede { font-size: 17px; }
+    .sec { padding-top: 60px; }
+    .sec h2 { font-size: 26px; }
+    .ev { grid-template-columns: 1fr; gap: 12px; }
+    .arrow { transform: rotate(90deg); justify-self: start; margin-left: 18px; }
+    .buzz { grid-template-columns: 1fr; }
+    .move { padding: 18px; }
   }
-  .wrap { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
-
-  header { padding: 96px 0 24px; text-align: center; }
-  .knot { font-size: 52px; line-height: 1; }
-  h1 { font-family: var(--serif); font-size: 44px; font-weight: 600; letter-spacing: -0.01em; margin: 14px 0 12px; }
-  .lede { font-size: 18px; color: var(--soft); margin: 0 auto; max-width: 34em; }
-  .quiet { font-size: 13.5px; color: var(--ghost); margin-top: 18px; }
-
-  h2 { font-family: var(--serif); font-size: 24px; font-weight: 600; margin: 56px 0 10px; }
-  p { color: var(--soft); margin: 0 0 14px; }
-  strong { color: var(--ink); font-weight: 600; }
-
-  .cmd {
-    font-family: var(--mono); font-size: 14px; color: var(--ink);
-    background: var(--chip); border-radius: 10px; padding: 14px 16px;
-    overflow-x: auto; white-space: nowrap; margin: 16px 0 8px;
-  }
-  .cmdnote { font-size: 13px; color: var(--ghost); margin-bottom: 0; }
-
-  ol.steps { margin: 18px 0 0; padding: 0 0 0 1.2em; color: var(--soft); }
-  ol.steps li { margin-bottom: 12px; padding-left: 6px; }
-  ol.steps b { color: var(--ink); font-weight: 600; }
-
-  .buzz {
-    border-left: 3px solid var(--brand); background: var(--brand-soft);
-    border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 18px 0;
-  }
-  .buzz p { margin: 0; font-size: 14.5px; }
-
-  footer {
-    margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--rule);
-    font-size: 13.5px; color: var(--ghost);
-  }
-  footer a, main a { color: var(--brand); text-decoration: none; }
-  footer a:hover, main a:hover { text-decoration: underline; }
-  footer .links { display: flex; gap: 18px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="knot" role="img" aria-label="knot">🪢</div>
-    <h1>Loose Ends</h1>
-    <p class="lede">The open loops in your head — noticed in your own mail and messages, worked in the background, and closed.</p>
-    <p class="quiet">Everything stays on a computer you own. There is no Loose Ends cloud.</p>
-  </header>
+<div class="page">
+  <div class="col">
+    <nav class="nav">
+      <a class="wordmark" href="./">Loose Ends</a>
+      <span class="links"><a href="#how">How it works</a><a href="#private">Privacy</a><a href="https://github.com/jayjay28/loose-ends">Source</a><a class="pill" href="#install">Download</a></span>
+    </nav>
 
-  <main>
-    <h2>What it does</h2>
-    <p>Your conversations are full of things you said you'd do: the reply you never sent, the thing you promised to buy, the plan that stalled. Loose Ends reads iMessage, your mail, and your calendar <strong>on your own Mac</strong>, finds those threads, works them while you live your life — comparing prices, drafting replies, watching for the mail that closes a loop — and hands them back to your phone with receipts.</p>
+    <header class="hero">
+      <div class="hero-mark"><svg class="spiral" viewBox="31.5 26.5 44 44" role="img" aria-label="Loose Ends"><path class="t" pathLength="1" d="M52 52C57 52 57 45 51 45C42 45 42 57 52 57C65 57 65 41 51 41C34 41 34 67 53 67C74 67 74 33 51 33"/><circle class="d" cx="51" cy="33" r="5.5"/></svg></div>
+      <h1 class="headline">Every <em>“I’ll get back to you,”</em> handed back.</h1>
+      <p class="lede">Loose Ends reads the messages and mail already on your Mac, notices what you promised, works on it while you don’t, and hands it back to your phone. You never type a task.</p>
+      <div class="ctas"><a class="pill big" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg">Download for macOS</a><a class="alt" href="app/">No Mac handy? Try the iPhone demo →</a></div>
+      <p class="quiet">Runs on a Mac you own. There is no Loose Ends cloud.</p>
+    </header>
 
-    <div class="buzz">
-      <p><strong>Your phone only ever buzzes for three things:</strong> an answer on an end you added, a deadline inside a day, a drafted move ready to send. Everything else waits quietly.</p>
-    </div>
+    <main>
+      <section class="sec" id="how">
+        <h2>It was already in the conversation.</h2>
+        <p>Most of what you owe people was said out loud: in a text, in a reply, in a thread you meant to come back to. Loose Ends reads those on your Mac and turns them into loose ends, each with the reason it surfaced written on it.</p>
+        <p class="sample">Sample · from the app’s demo</p>
+        <div class="ev">
+          <div>
+            <p class="who">Tess · iMessage · Sunday</p>
+            <div class="bubble">Reminder that the Hendersons’ dinner is a week from Saturday and we still haven’t RSVPd</div>
+          </div>
+          <svg class="arrow" width="28" height="12" viewBox="0 0 28 12" aria-hidden="true"><path d="M1 6h24M20 1.5l5 4.5-5 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div>
+            <p class="row-t">RSVP to the Hendersons’ dinner</p>
+            <p class="row-s">They asked twice. Saturday.</p>
+            <div class="chips"><span class="chip due">Saturday. Asked twice.</span><span class="prov">Date read from “a week from Saturday”</span></div>
+          </div>
+        </div>
+      </section>
 
-    <h2>How it's built</h2>
-    <p>The engine runs on your Mac — your messages, your database, your own Google Gemini API key. The iPhone app is a pure client that pairs with your engine over your own network. The one hosted piece is a push relay that is <strong>content-free by construction</strong>: its API has no title or body field, so it can only ever say "wake up, ask your engine." Your mail is read from Apple Mail on that same Mac, behind the one permission macOS already asks for — so there is no cloud project, no consent screen, and no third party anywhere in the read path.</p>
+      <section class="sec">
+        <h2>Then it does the legwork.</h2>
+        <p>While you’re busy, the engine works each one: it compares prices, drafts the reply, and watches your mail for whatever would close it. What comes back is a move with only the last tap left for you.</p>
+        <p class="sample">Sample · from the app’s demo</p>
+        <div class="move">
+          <div class="move-top"><p class="row-t">Get Tess the croissant bag</p><span class="status you">Needs you</span></div>
+          <p class="kind">To decide</p>
+          <h3>Order is staged — it needs the color call</h3>
+          <ul class="steps">
+            <li>Found the bag at two stockists</li>
+            <li>Compared prices — direct is $40 less</li>
+            <li>Cart is filled and sitting at checkout</li>
+          </ul>
+          <dl class="facts"><div><dt>Direct</dt><dd>$1,290</dd></div><div><dt>Stockist</dt><dd>$1,330</dd></div></dl>
+          <p class="ask">Dark chocolate or tan? She’s pointed at both.</p>
+          <div class="choices"><span class="choice">Dark chocolate</span><span class="choice">Tan</span></div>
+          <p class="receipt">From Tess in iMessage, 4 days ago</p>
+        </div>
+        <div class="closure">
+          <div class="move-top"><p class="row-t">Lock in padel with Dev</p><span class="status done">Looks finished</span></div>
+          <ul class="steps">
+            <li>Dev said “locked in” three hours ago</li>
+            <li>The court booking confirmation landed in mail</li>
+          </ul>
+          <div class="choices"><span class="choice fill">Yes, done</span><span class="choice">Not yet</span></div>
+          <p class="receipt">It asks before it closes anything. One tap closes it.</p>
+        </div>
+      </section>
 
-    <h2>Install</h2>
-    <p>You'll need a Mac that stays on, an iPhone, and about ten minutes — most of it getting a free Google Gemini API key. Full prerequisites and the honest edges are in the <a href="https://github.com/jayjay28/loose-ends#readme">README</a>.</p>
-    <div style="margin: 16px 0;">
-      <a class="cta" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg" style="display:inline-block;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;font-size:16px;padding:13px 26px;border-radius:100px;">Download for macOS</a>
-    </div>
-    <p class="cmdnote">Installs the native Menu Bar app and background engine, then opens the setup wizard in your browser. The wizard walks everything else — and ends with a QR code your phone scans.</p>
+      <section class="sec buzz">
+        <div>
+          <h2>Your phone buzzes for three things.</h2>
+          <p>An answer on something you asked it to handle, a deadline inside a day, and a move that’s ready. Everything else waits in the app until you open it.</p>
+        </div>
+        <div class="notifs">
+          <div>
+            <p class="rulelbl">An answer on an end you added</p>
+            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>now</span></div><p class="nt">Milo’s fall soccer signup</p><p class="nb">Registration mail is in. The form is filled up to payment.</p></div></div>
+          </div>
+          <div>
+            <p class="rulelbl">A deadline inside a day</p>
+            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>9:41</span></div><p class="nt">RSVP to the Hendersons’ dinner</p><p class="nb">Saturday is tomorrow. A yes is drafted.</p></div></div>
+          </div>
+          <div>
+            <p class="rulelbl">A move that’s ready</p>
+            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>8:02</span></div><p class="nt">Get Tess the croissant bag</p><p class="nb">The cart is staged. Dark chocolate or tan?</p></div></div>
+          </div>
+        </div>
+      </section>
 
-    <ol class="steps">
-      <li><b>The app installs itself</b> — a Menu Bar app and launchd job on your Mac.</li>
-      <li><b>The wizard does the setup</b> — one permission for Messages and Mail, then your Gemini key. It advances itself and verifies by doing, not asking.</li>
-      <li><b>Get the iOS app and scan the QR</b> — <a href="app/">clyon.dev/loose-ends/app</a>. One photo pairs your phone and sets every address the engine answers on.</li>
-    </ol>
+      <section class="sec" id="private">
+        <h2>There is no Loose Ends cloud.</h2>
+        <p>The engine runs on your Mac and reads the copies of your mail and messages that are already there. The AI works under <strong>your own Gemini API key</strong>. Your iPhone talks to your Mac, not to us.</p>
+        <p>The one hosted piece is a push relay. This is everything it accepts:</p>
+<pre class="payload"><span class="c">POST /v1/push</span>
+{
+  "device_tokens": [<span class="s">"9f3c…e1a4"</span>],
+  "level":         <span class="s">"active"</span>,
+  "collapse_id":   <span class="s">"t_8412"</span>,
+  "thread_id":     <span class="s">"t_8412"</span>,
+  "finding_id":    <span class="s">"f_2210"</span>
+}</pre>
+        <p class="cap">A device token and opaque ids. No field can hold a word from your messages, so the relay can only say “wake up.” Your phone gets the words from your Mac.</p>
+      </section>
 
-    <h2>Try it with nothing</h2>
-    <p>The iPhone app has a full demo on a fictional world — every screen, every verb, no Mac required. Look around before you commit an afternoon.</p>
-  </main>
+      <section class="sec" id="install">
+        <h2>About ten minutes to set up.</h2>
+        <p>You need a Mac that stays on, an iPhone, and a free Google Gemini API key. The setup page walks you through getting one. Full prerequisites and the honest edges are in the <a href="https://github.com/jayjay28/loose-ends#readme">README</a>.</p>
+        <div class="install-row">
+          <a class="pill big" id="dl-final" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg">Download for macOS</a>
+          <a class="iphone" href="app/"><img src="icon.png" alt=""><span>Loose Ends for iPhone<small>In TestFlight · full demo, no Mac needed</small></span></a>
+        </div>
+        <ol class="how">
+          <li><b>Open the installer.</b> It adds a menu bar app and the background engine, then opens the setup page in your browser.</li>
+          <li><b>Follow the setup page.</b> One permission for Messages and Mail, then your Gemini key. It checks each step by running it.</li>
+          <li><b>Scan the code with your iPhone.</b> One scan pairs your phone with your Mac.</li>
+        </ol>
+      </section>
+    </main>
 
-  <footer>
-    <div class="links">
-      <a href="https://github.com/jayjay28/loose-ends">Source</a>
-      <a href="SPEC.html">The spec</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="support.html">Support</a>
-    </div>
-  </footer>
+    <footer class="foot">
+      <span class="lockup"><svg class="spiral" viewBox="31.5 26.5 44 44" aria-hidden="true"><path class="t" pathLength="1" d="M52 52C57 52 57 45 51 45C42 45 42 57 52 57C65 57 65 41 51 41C34 41 34 67 53 67C74 67 74 33 51 33"/><circle class="d" cx="51" cy="33" r="5.5"/></svg><span class="wordmark">Loose Ends</span></span>
+      <span class="links"><a href="https://github.com/jayjay28/loose-ends">Source</a><a href="SPEC.html">The spec</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></span>
+      <span class="dev">The engine is open source. To add a message source or build your own client, <a href="https://github.com/jayjay28/loose-ends#readme">start with the README</a>.</span>
+    </footer>
+  </div>
+
+  <svg class="thread" id="thread" aria-hidden="true" hidden><path d=""/><circle r="8" cx="-40" cy="-40"/></svg>
 </div>
+<script>
+// The loose end: the logo's dot leaves the spiral on a thread that follows the
+// reader down the left gutter and lands on the Download button. Without JS the
+// spiral keeps its own dot and none of this runs.
+(() => {
+  const root = document.documentElement;
+  const page = document.querySelector('.page');
+  const svg = document.getElementById('thread');
+  const mark = document.querySelector('.hero-mark .spiral');
+  const col = document.querySelector('.page > .col');
+  const btn = document.getElementById('dl-final');
+  if (!page || !svg || !mark || !col || !btn || !window.ResizeObserver) return;
+  const path = svg.querySelector('path'), dot = svg.querySelector('circle');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let T = null, reach = reduce ? 1 : 0, landed = false, queued = false;
+
+  const rel = el => {
+    const a = el.getBoundingClientRect(), b = page.getBoundingClientRect();
+    return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height };
+  };
+  const pop = () => { dot.classList.remove('pop'); void dot.getBoundingClientRect(); dot.classList.add('pop'); };
+
+  function layout() {
+    const W = page.offsetWidth, H = page.offsetHeight;
+    svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const s = rel(mark), c = rel(col), k = rel(btn);
+    const gx = c.x + parseFloat(getComputedStyle(col).paddingLeft) * 0.42;
+    // Where AnimatedLogo's stroke ends — (51, 33) in its 100pt space — in page pixels.
+    const x0 = s.x + (51 - 31.5) / 44 * s.w, y0 = s.y + (33 - 26.5) / 44 * s.h;
+    const yc = k.y + k.h / 2, xc = k.x - 13;
+    const sway = W < 620 ? 5 : 9;
+    let d = `M${x0} ${y0}C${x0 - (x0 - gx) * 0.7} ${y0} ${gx} ${y0 + 10} ${gx} ${y0 + 60}`;
+    let y = y0 + 60, sgn = 1;
+    const stops = [...page.querySelectorAll('.sec h2')]
+      .map(h => { const r = rel(h); return r.y + Math.min(r.h, 40) / 2; })
+      .filter(a => a > y + 40 && a < yc - 110).concat([yc - 70]);
+    for (const ya of stops) {
+      const dy = ya - y;
+      d += `C${gx + sway * sgn} ${y + dy / 3} ${gx - sway * sgn} ${y + 2 * dy / 3} ${gx} ${ya}`;
+      y = ya; sgn = -sgn;
+    }
+    d += `C${gx} ${yc - 24} ${gx + (xc - gx) * 0.35} ${yc} ${xc} ${yc}`;
+    path.setAttribute('d', d);
+    // y is nearly monotonic along the path, so a running max makes it searchable.
+    const total = path.getTotalLength(), N = 480, ys = new Float32Array(N + 1);
+    let m = -Infinity;
+    for (let i = 0; i <= N; i++) { m = Math.max(m, path.getPointAtLength(total * i / N).y); ys[i] = m; }
+    T = { total, ys, N, top: page.getBoundingClientRect().top + scrollY };
+    path.style.strokeDasharray = `${total} ${total}`;
+    svg.removeAttribute('hidden');
+    root.classList.add('threaded');
+    update();
+  }
+
+  function lenForY(yT) {
+    const { ys, N, total } = T;
+    if (yT <= ys[0]) return 0;
+    if (yT >= ys[N]) return total;
+    let lo = 0, hi = N;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (ys[mid] < yT) lo = mid; else hi = mid; }
+    return total * hi / N;
+  }
+
+  function update() {
+    queued = false;
+    if (!T) return;
+    const L = lenForY(scrollY + innerHeight * 0.62 - T.top) * reach;
+    path.style.strokeDashoffset = T.total - L;
+    const p = path.getPointAtLength(L);
+    dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+    dot.style.opacity = reach > 0 ? 1 : 0;
+    const now = L >= T.total - 0.5;
+    if (now && !landed) pop();
+    landed = now;
+  }
+
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+  new ResizeObserver(layout).observe(page);
+  if (document.fonts) document.fonts.ready.then(layout);
+  addEventListener('load', layout);
+
+  // The thread reaches out just as the spiral finishes drawing (1.5s), like the app's dot.
+  if (!reduce) {
+    const t0 = performance.now() + 1250, dur = 900;
+    const step = now => {
+      const k = Math.min(1, Math.max(0, (now - t0) / dur));
+      const was = reach;
+      reach = 1 - Math.pow(1 - k, 3);
+      if (was === 0 && reach > 0) pop();
+      update();
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+})();
+</script>
 </body>
 </html>
