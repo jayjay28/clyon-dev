@@ -3,37 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Loose Ends — every “I’ll get back to you,” handed back</title>
-<meta name="description" content="Loose Ends reads the messages and mail already on your Mac, notices what you promised, works on it in the background, and hands it back to your phone. You never type a task. There is no Loose Ends cloud.">
-<meta name="color-scheme" content="light dark">
+<title>Loose Ends — stop holding it all in your head</title>
+<meta name="description" content="You’re busy. Loose Ends already knows the context, handles the details, and waits for your instructions. Self-hosted on your own Mac: we never see your messages.">
+<meta name="color-scheme" content="dark">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <script>document.documentElement.classList.add('js')</script>
 <style>
-  /* Tokens are the app's (ios/Lifeline/Views/Theme.swift). System fonts only:
-     a privacy product shouldn't hand every visitor's IP to a font CDN. */
+  /* One look on purpose: the app icon's own ground, deep teal, with its cream
+     and orange, in Theme.swift's roles. System fonts only: a privacy product
+     shouldn't hand every visitor's IP to a font CDN. */
   :root {
-    --paper: #F6F1E7; --card: #FBF7EF; --chip: #EDE6D8;
-    --ink: #211E19; --soft: #5A5348; --faint: #6B6357; --ghost: #857C6E;
-    --rule: #DCD5C6; --brand: #1F6157; --on-brand: #FBF7EF; --alert: #A84124;
-    --plum: #7A4062; --plum-soft: rgba(122,64,98,.10); --sage: #5B7A4F; --sage-soft: rgba(91,122,79,.12);
-    --bubble: #E6E2DA; --notif: #EDE7DB;
+    --paper: #13302C; --card: #1A3B36; --chip: #22463F;
+    --ink: #F4EFE6; --soft: #BCCEC7; --faint: #9FB5AD; --ghost: #80978F;
+    --rule: #2D544C; --brand: #8FD3C1; --on-brand: #0D2521; --alert: #F08A5D;
+    --plum: #E6AACB; --plum-soft: rgba(230,170,203,.16); --sage: #B8DDA2; --sage-soft: rgba(184,221,162,.16);
+    --bubble: #21463F; --notif: #1D413B; --thread: #8FD3C1; --amber: #D9A253;
     --serif: ui-serif, "New York", Charter, Georgia, serif;
     --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
     --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #161513; --card: #1E1C19; --chip: #26231E;
-      --ink: #ECE7DD; --soft: #A69C8C; --faint: #8F867A; --ghost: #736B60;
-      --rule: #302D28; --brand: #6FB3A5; --on-brand: #10201D; --alert: #E0785A;
-      --plum: #C189A8; --plum-soft: rgba(193,137,168,.14); --sage: #9CBE8F; --sage-soft: rgba(156,190,143,.14);
-      --bubble: #2B2925; --notif: #221F1C;
-    }
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: radial-gradient(1100px 620px at 12% -8%, rgba(143,211,193,.16), transparent 62%), radial-gradient(900px 560px at 96% 4%, rgba(240,138,93,.12), transparent 60%), var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: var(--brand); text-decoration: none; }
   a:hover { text-decoration: underline; }
   a:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
@@ -69,7 +62,7 @@
   .hero-mark .d { animation: le-pop .55s cubic-bezier(.34,1.56,.64,1) 1.2s both; }
   .threaded .hero-mark .d { display: none; }   /* the thread's dot takes over */
   .thread { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
-  .thread path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+  .thread path { fill: none; stroke: var(--thread); stroke-width: 2.5; stroke-linecap: round; }
   .thread circle { fill: var(--alert); transform-box: fill-box; transform-origin: center; }
   .thread circle.pop { animation: le-pop .5s cubic-bezier(.34,1.56,.64,1); }
   @keyframes le-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
@@ -81,7 +74,7 @@
   .sec p:not([class]) { color: var(--soft); max-width: 35em; margin: 0 0 14px; font-size: 16.5px; }
   .sec p strong { color: var(--ink); font-weight: 600; }
   .sec p.cap { font-size: 13.5px; color: var(--faint); max-width: 35em; margin: 0 0 14px; }
-  .sample { font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 26px 0 12px; }
+  .sample { font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 26px 0 12px; }
 
   .ev { display: grid; grid-template-columns: minmax(0,1fr) 40px minmax(0,1fr); align-items: center; gap: 18px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 24px 0; }
   .who { font-size: 12px; color: var(--faint); margin: 0 0 6px 4px; }
@@ -163,6 +156,116 @@
     .buzz { grid-template-columns: 1fr; }
     .move { padding: 18px; }
   }
+
+
+  /* ---- Watch it work: the app itself, being used. Sized from the SwiftUI
+     views (ThreadsView, StackRows, ThreadDetailView, ThreadChatView) at about
+     0.8 of an iPhone's 390pt width, in the page's own tokens. ---- */
+  .demo-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+  .dswitch { display: inline-flex; gap: 2px; padding: 3px; background: var(--chip); border-radius: 100px; }
+  .dswitch button { border: 0; background: transparent; border-radius: 100px; padding: 8px 14px; font: 600 13.5px/1 var(--sans); color: var(--soft); cursor: pointer; }
+  .dswitch button[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+  .dpause { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--rule); background: transparent; color: var(--soft); display: grid; place-items: center; cursor: pointer; }
+  .dpause svg { width: 11px; height: 11px; }
+  .dswitch button:focus-visible, .dpause:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .demo-grid { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 34px; align-items: start; margin-top: 18px; }
+
+  .phone-wrap { width: 330px; height: 680px; }
+  .iphone { position: relative; width: 330px; height: 680px; border-radius: 52px; background: #141311; padding: 10px; box-shadow: 0 34px 60px -34px rgba(0,0,0,.5), inset 0 0 0 2px #2c2a27; }
+  .island { position: absolute; z-index: 6; top: 20px; left: 50%; width: 96px; height: 28px; margin-left: -48px; border-radius: 20px; background: #000; }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: var(--paper); color: var(--ink); }
+  .sbar { position: relative; z-index: 4; height: 48px; display: flex; justify-content: space-between; align-items: center; padding: 8px 28px 0; font: 600 13px/1 var(--sans); background: var(--paper); }
+  .sbi { display: flex; align-items: flex-end; gap: 2px; }
+  .sbi i { width: 3px; border-radius: 1px; background: var(--ink); }
+  .sbi i:nth-child(1) { height: 5px; } .sbi i:nth-child(2) { height: 7px; } .sbi i:nth-child(3) { height: 9px; }
+  .sbi b { width: 20px; height: 10px; margin-left: 5px; border-radius: 3px; border: 1.5px solid var(--ink); position: relative; }
+  .sbi b::after { content: ""; position: absolute; inset: 1.5px 4px 1.5px 1.5px; border-radius: 1px; background: var(--ink); }
+  .scr { position: absolute; inset: 48px 0 0 0; display: flex; flex-direction: column; background: var(--paper); transition: transform .45s cubic-bezier(.3,.7,.2,1), opacity .45s ease; }
+  .scr-thread { transform: translateX(100%); }
+  .at-thread .scr-stack { transform: translateX(-30%); opacity: 0; }
+  .at-thread .scr-thread { transform: none; }
+
+  .ph { padding: 4px 16px 0; }
+  .ph-title { margin: 6px 0 2px; font: 500 23px/1.15 var(--serif); }
+  .ph-sub { margin: 0; font: 500 11px/1.3 var(--sans); color: var(--soft); }
+  .ph-rule { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; font: 600 9px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  .ph-rule::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  .brow { display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 11px 6px 11px 0; border-bottom: 1px solid var(--rule); border-radius: 6px; transition: background .2s, opacity .4s; }
+  .brow .gut { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); align-self: center; opacity: 0; }
+  .brow.unseen .gut { opacity: 1; }
+  .brow .t { font: 600 15px/1.25 var(--serif); }
+  .brow .s { font: 11.5px/1.35 var(--sans); color: var(--soft); margin-top: 2px; }
+  .why { font: 700 8.5px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; padding: 3px 5px; border-radius: 4px; white-space: nowrap; }
+  .why.due { color: var(--amber); background: color-mix(in srgb, var(--amber) 14%, transparent); }
+  .why.new { color: var(--brand); background: color-mix(in srgb, var(--brand) 14%, transparent); }
+  .brow.tapped { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+  .brow.closed { opacity: .5; }
+  .brow.closed .t { text-decoration: line-through; text-decoration-color: var(--soft); }
+  .ccard { margin: 12px 0 2px; padding: 10px 11px; border-radius: 10px; background: var(--card); border: 1px solid var(--rule); display: grid; gap: 5px; }
+  .ccard .k { font: 600 8.5px/1 var(--sans); letter-spacing: .13em; color: var(--brand); }
+  .ccard .ct { font: 600 13px/1.25 var(--serif); }
+  .ccard .r { font: 11px/1.35 var(--sans); color: var(--soft); }
+  .ccard .btns { display: flex; gap: 6px; margin-top: 3px; }
+  .cbtn { font: 600 11px/1 var(--sans); padding: 6px 10px; border-radius: 7px; }
+  .cbtn.yes { background: var(--brand); color: var(--on-brand); }
+  .cbtn.no { font-weight: 500; color: var(--soft); background: color-mix(in srgb, var(--soft) 13%, transparent); }
+
+  .tnav { display: flex; justify-content: space-between; align-items: center; padding: 2px 14px 6px; font: 600 13.5px/1 var(--sans); color: var(--brand); }
+  .tnav .back { font: 400 24px/1 var(--sans); margin-top: -3px; }
+  .thead { padding: 2px 16px 10px; border-bottom: 1px solid var(--rule); }
+  .thead .tt { margin: 0; font: 600 17px/1.25 var(--serif); }
+  .thead .tm { margin: 3px 0 0; font: 11.5px/1.35 var(--sans); color: var(--soft); }
+  .chat { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 10px 14px 6px; }
+  .cempty .a { margin: 0; font: 600 13px/1.3 var(--sans); }
+  .cempty .b { margin: 3px 0 0; font: 11.5px/1.4 var(--sans); color: var(--soft); }
+  .ub { align-self: flex-end; max-width: 82%; background: var(--brand); color: var(--on-brand); font: 13px/1.35 var(--sans); padding: 8px 11px; border-radius: 15px; }
+  .ab { align-self: flex-start; max-width: 92%; background: var(--card); border: 1px solid var(--rule); font: 12.5px/1.4 var(--sans); padding: 8px 11px; border-radius: 15px; white-space: pre-line; }
+  .ab .h { display: block; font: 600 11.5px/1.3 var(--sans); color: var(--brand); margin-bottom: 2px; }
+  .wk { background: var(--card); border: 1px solid color-mix(in srgb, var(--brand) 40%, transparent); border-radius: 15px; padding: 10px 11px; display: grid; gap: 5px; }
+  .wk .h { display: flex; align-items: center; gap: 7px; font: 600 12px/1 var(--sans); }
+  .wk .h i { width: 5px; height: 5px; border-radius: 50%; background: var(--alert); animation: exdot .9s ease-in-out infinite alternate; }
+  .wk .l { margin: 0; font: 11.5px/1.35 var(--sans); color: var(--soft); }
+  .when { align-self: center; margin: 0; font: 500 10.5px/1 var(--sans); color: var(--faint); padding: 4px 0; }
+  .chips2 { display: flex; gap: 6px; padding: 2px 14px 0; min-height: 30px; align-items: center; }
+  .chip2 { font: 600 12px/1 var(--sans); padding: 8px 13px; border-radius: 100px; }
+  .chip2.p { background: var(--brand); color: var(--on-brand); }
+  .chip2.s { background: color-mix(in srgb, var(--brand) 12%, transparent); color: var(--brand); }
+  .comp { display: flex; align-items: center; gap: 8px; padding: 6px 14px 18px; }
+  .comp .f { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--rule); border-radius: 17px; padding: 8px 12px; font: 13px/1.3 var(--sans); white-space: nowrap; overflow: hidden; }
+  .comp .f .ph2 { color: var(--faint); }
+  .comp .go { width: 30px; height: 30px; border-radius: 50%; background: color-mix(in srgb, var(--brand) 35%, transparent); display: grid; place-items: center; flex: none; transition: background .2s; }
+  .comp .go.live { background: var(--brand); }
+  .comp .go svg { width: 13px; height: 13px; color: var(--on-brand); }
+  .caret2 { display: inline-block; width: 1.5px; height: 1em; background: var(--brand); vertical-align: -2px; margin-left: 1px; animation: dblink 1s steps(1) infinite; }
+  .finger { position: absolute; z-index: 9; left: 60%; top: 70%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(128,128,128,.3); border: 2px solid rgba(255,255,255,.75); opacity: 0; pointer-events: none;
+    transition: left .5s cubic-bezier(.3,.7,.2,1), top .5s cubic-bezier(.3,.7,.2,1), opacity .2s, transform .12s; }
+  .finger.on { opacity: 1; }
+  .finger.press { transform: scale(.76); }
+  .rise { animation: drise .3s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes drise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes dblink { 50% { opacity: 0; } }
+  @keyframes exdot { to { opacity: .25; } }
+
+  .dsteps { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 15px; counter-reset: d; }
+  .dsteps li { counter-increment: d; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 10px; row-gap: 2px; }
+  .dsteps li::before { content: counter(d); grid-row: span 2; font: italic 500 19px/1.1 var(--serif); color: var(--ghost); transition: color .3s; }
+  .dsteps li b { font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--soft); transition: color .3s; }
+  .dsteps li span { font-size: 14px; line-height: 1.45; color: var(--faint); }
+  .dsteps li.past::before, .dsteps li[aria-current="step"]::before { color: var(--brand); }
+  .dsteps li.past b, .dsteps li[aria-current="step"] b { color: var(--ink); }
+  .dsteps li[aria-current="step"] span { color: var(--soft); }
+  .knew { margin-top: 24px; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .knew .knew-t { margin: 0 0 10px; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  .knew ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .knew li { font-size: 14px; line-height: 1.4; color: var(--ink); }
+  .knew li span { color: var(--faint); }
+  .still .rise, .still .wk .h i, .still .caret2 { animation: none !important; }
+  @media (prefers-reduced-motion: reduce) { .rise, .wk .h i, .caret2 { animation: none !important; } .scr, .finger { transition: none !important; } }
+  @media (max-width: 760px) { .demo-grid { grid-template-columns: minmax(0, 1fr); } .phone-wrap { justify-self: center; } }
+  @media (max-width: 420px) { .phone-wrap { width: 297px; height: 612px; } .iphone { transform: scale(.9); transform-origin: top left; } }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .still .scr { transition: none; }
+
 </style>
 </head>
 <body>
@@ -170,22 +273,59 @@
   <div class="col">
     <nav class="nav">
       <a class="wordmark" href="./">Loose Ends</a>
-      <span class="links"><a href="#how">How it works</a><a href="#private">Privacy</a><a href="https://github.com/jayjay28/loose-ends">Source</a><a class="pill" href="#install">Download</a></span>
+      <span class="links"><a href="#demo">How it works</a><a href="#private">Privacy</a><a href="https://github.com/jayjay28/loose-ends">Source</a><a class="pill" href="#install">Download</a></span>
     </nav>
 
     <header class="hero">
       <div class="hero-mark"><svg class="spiral" viewBox="31.5 26.5 44 44" role="img" aria-label="Loose Ends"><path class="t" pathLength="1" d="M52 52C57 52 57 45 51 45C42 45 42 57 52 57C65 57 65 41 51 41C34 41 34 67 53 67C74 67 74 33 51 33"/><circle class="d" cx="51" cy="33" r="5.5"/></svg></div>
-      <h1 class="headline">Every <em>“I’ll get back to you,”</em> handed back.</h1>
-      <p class="lede">Loose Ends reads the messages and mail already on your Mac, notices what you promised, works on it while you don’t, and hands it back to your phone. You never type a task.</p>
+      <h1 class="headline">Stop holding it all <em>in your head.</em></h1>
+      <p class="lede">You’re busy. Loose Ends already knows the context, handles the details, and waits for your instructions.</p>
       <div class="ctas"><a class="pill big" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg">Download for macOS</a><a class="alt" href="app/">No Mac handy? Try the iPhone demo →</a></div>
-      <p class="quiet">Runs on a Mac you own. There is no Loose Ends cloud.</p>
+      <p class="quiet">Self-hosted on your own Mac. We never see your messages.</p>
     </header>
 
     <main>
+      <section class="sec demo" id="demo" aria-labelledby="demo-h">
+        <h2 id="demo-h">Watch it work.</h2>
+        <p>Because it already knows the context, a few words is all it takes.</p>
+        <div class="demo-bar">
+          <div class="dswitch" role="group" aria-label="Choose an example"><button type="button" data-s="home" aria-pressed="true">Milo’s field-trip form</button><button type="button" data-s="work" aria-pressed="false">Chicago trip receipts</button></div>
+          <button class="dpause" type="button" aria-pressed="false" aria-label="Pause the example"><svg viewBox="0 0 12 12" aria-hidden="true"><path class="i-pause" d="M3 2h2v8H3zM7 2h2v8H7z" fill="currentColor"/><path class="i-play" d="M3 1.8l7 4.2-7 4.2z" fill="currentColor" hidden/></svg></button>
+        </div>
+        <div class="demo-grid">
+          <div class="phone-wrap"><div class="iphone" aria-hidden="true">
+            <i class="island"></i>
+            <div class="screen" id="d-screen">
+              <div class="sbar"><span>9:41</span><span class="sbi"><i></i><i></i><i></i><b></b></span></div>
+              <div class="scr scr-stack"><div class="ph">
+                <p class="ph-title">Loose Ends</p>
+                <p class="ph-sub" id="d-count"></p>
+                <div id="d-closure"></div>
+                <p class="ph-rule">This week</p>
+                <div id="d-rows"></div>
+              </div></div>
+              <div class="scr scr-thread">
+                <div class="tnav"><span class="back">‹</span><span>Close</span></div>
+                <div class="thead"><p class="tt" id="d-tt"></p><p class="tm" id="d-tm"></p></div>
+                <div class="chat" id="d-chat"></div>
+                <div class="chips2" id="d-chips"></div>
+                <div class="comp"><div class="f" id="d-field"></div><span class="go" id="d-go"><svg viewBox="0 0 14 14"><path d="M7 12V2M2.5 6.5L7 2l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+              </div>
+              <i class="finger" id="d-finger"></i>
+            </div>
+          </div></div>
+          <div class="dside">
+            <ol class="dsteps" id="d-steps"><li><b></b><span></span></li><li><b></b><span></span></li><li><b></b><span></span></li><li><b></b><span></span></li><li><b></b><span></span></li></ol>
+            <div class="knew"><p class="knew-t">What it already knew</p><ul id="d-knew"></ul></div>
+          </div>
+        </div>
+        <p class="sr" id="d-alt"></p>
+      </section>
+
       <section class="sec" id="how">
-        <h2>It was already in the conversation.</h2>
-        <p>Most of what you owe people was said out loud: in a text, in a reply, in a thread you meant to come back to. Loose Ends reads those on your Mac and turns them into loose ends, each with the reason it surfaced written on it.</p>
-        <p class="sample">Sample · from the app’s demo</p>
+        <h2>It notices what you’d lose track of.</h2>
+        <p>A reminder buried in a text. A deadline in a school newsletter. Loose Ends reads them on your Mac and turns each one into a loose end, with the reason it matters written on it. You never have to write it down.</p>
+        <p class="sample">Example</p>
         <div class="ev">
           <div>
             <p class="who">Tess · iMessage · Sunday</p>
@@ -200,35 +340,6 @@
         </div>
       </section>
 
-      <section class="sec">
-        <h2>Then it does the legwork.</h2>
-        <p>While you’re busy, the engine works each one: it compares prices, drafts the reply, and watches your mail for whatever would close it. What comes back is a move with only the last tap left for you.</p>
-        <p class="sample">Sample · from the app’s demo</p>
-        <div class="move">
-          <div class="move-top"><p class="row-t">Get Tess the croissant bag</p><span class="status you">Needs you</span></div>
-          <p class="kind">To decide</p>
-          <h3>Order is staged — it needs the color call</h3>
-          <ul class="steps">
-            <li>Found the bag at two stockists</li>
-            <li>Compared prices — direct is $40 less</li>
-            <li>Cart is filled and sitting at checkout</li>
-          </ul>
-          <dl class="facts"><div><dt>Direct</dt><dd>$1,290</dd></div><div><dt>Stockist</dt><dd>$1,330</dd></div></dl>
-          <p class="ask">Dark chocolate or tan? She’s pointed at both.</p>
-          <div class="choices"><span class="choice">Dark chocolate</span><span class="choice">Tan</span></div>
-          <p class="receipt">From Tess in iMessage, 4 days ago</p>
-        </div>
-        <div class="closure">
-          <div class="move-top"><p class="row-t">Lock in padel with Dev</p><span class="status done">Looks finished</span></div>
-          <ul class="steps">
-            <li>Dev said “locked in” three hours ago</li>
-            <li>The court booking confirmation landed in mail</li>
-          </ul>
-          <div class="choices"><span class="choice fill">Yes, done</span><span class="choice">Not yet</span></div>
-          <p class="receipt">It asks before it closes anything. One tap closes it.</p>
-        </div>
-      </section>
-
       <section class="sec buzz">
         <div>
           <h2>Your phone buzzes for three things.</h2>
@@ -237,7 +348,7 @@
         <div class="notifs">
           <div>
             <p class="rulelbl">An answer on an end you added</p>
-            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>now</span></div><p class="nt">Milo’s fall soccer signup</p><p class="nb">Registration mail is in. The form is filled up to payment.</p></div></div>
+            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>now</span></div><p class="nt">Milo’s fall soccer signup</p><p class="nb">The league’s registration email just arrived.</p></div></div>
           </div>
           <div>
             <p class="rulelbl">A deadline inside a day</p>
@@ -245,24 +356,15 @@
           </div>
           <div>
             <p class="rulelbl">A move that’s ready</p>
-            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>8:02</span></div><p class="nt">Get Tess the croissant bag</p><p class="nb">The cart is staged. Dark chocolate or tan?</p></div></div>
+            <div class="notif"><img src="icon.png" alt=""><div><div class="hd"><span>LOOSE ENDS</span><span>8:02</span></div><p class="nt">Chicago trip receipts</p><p class="nb">Email ready to send, with 2 receipts attached.</p></div></div>
           </div>
         </div>
       </section>
 
       <section class="sec" id="private">
-        <h2>There is no Loose Ends cloud.</h2>
-        <p>The engine runs on your Mac and reads the copies of your mail and messages that are already there. The AI works under <strong>your own Gemini API key</strong>. Your iPhone talks to your Mac, not to us.</p>
-        <p>The one hosted piece is a push relay. This is everything it accepts:</p>
-<pre class="payload"><span class="c">POST /v1/push</span>
-{
-  "device_tokens": [<span class="s">"9f3c…e1a4"</span>],
-  "level":         <span class="s">"active"</span>,
-  "collapse_id":   <span class="s">"t_8412"</span>,
-  "thread_id":     <span class="s">"t_8412"</span>,
-  "finding_id":    <span class="s">"f_2210"</span>
-}</pre>
-        <p class="cap">A device token and opaque ids. No field can hold a word from your messages, so the relay can only say “wake up.” Your phone gets the words from your Mac.</p>
+        <h2>Your life stays on your Mac.</h2>
+        <p>Loose Ends is self-hosted. The engine runs on your own Mac and reads the copies of your mail and messages that are already there. We never see what’s on your phone or your Mac, and there’s no account to create.</p>
+        <p>Your iPhone talks to your Mac, not to us. The AI works under your own Google Gemini key.</p>
       </section>
 
       <section class="sec" id="install">
@@ -383,6 +485,224 @@
     };
     requestAnimationFrame(step);
   }
+})();
+</script>
+<script>
+(() => {
+  // Two errands, each told the way v3 runs it: the row the engine raised, a few
+  // words in the thread chat, the working log, the staged draft (draft_email),
+  // the tap (send_draft), the reply, and the closure question on the stack.
+  const S = {
+    home: {
+      row: { t: 'Milo’s field-trip form', s: 'From the Lakeview newsletter: forms due Friday.', why: ['due', 'Due Fri'] },
+      tt: 'Milo’s field-trip form', tm: 'Due Friday · from the Lakeview newsletter',
+      ask: 'Send the form to his teacher',
+      log: ['Milo’s teacher is Ms. Rivera, from the Lakeview newsletter',
+            'Found Field-Trip-Form.pdf in your Downloads',
+            'Read how you usually write to school'],
+      draft: 'To: Ms. Rivera\nSubject: Milo’s field-trip form\n\nHi Ms. Rivera, Milo’s form for Friday’s trip is attached. Thank you!\n\nAttached: Field-Trip-Form.pdf',
+      when: 'Tuesday, 2:14 pm',
+      reply: 'Ms. Rivera replied: “Got it, thank you! He’s all set for Friday.”',
+      reasons: ['Ms. Rivera confirmed she has the form', 'Nothing left to send'],
+      steps: [['It noticed', 'The school newsletter said field-trip forms are due Friday.'],
+              ['You asked, in six words', '“Send the form to his teacher.” No name, no file.'],
+              ['It filled in the rest', 'Knew his teacher is Ms. Rivera, found the form in Downloads, and wrote it the way you write to school.'],
+              ['You tapped Send it', 'Nothing goes out before this.'],
+              ['It came back done', 'Ms. Rivera replied. One more tap closed it.']],
+      knew: [['Milo is your son', 'your messages'], ['Ms. Rivera is his teacher', 'the Lakeview newsletter'],
+             ['Field-Trip-Form.pdf', 'your Downloads'], ['How you write to school', 'your sent mail']]
+    },
+    work: {
+      row: { t: 'Chicago trip receipts', s: 'Your trip ended Sunday. The receipts are in your mail.', why: ['new', 'New'] },
+      tt: 'Chicago trip receipts', tm: 'From your calendar and mail',
+      ask: 'Send these to expenses',
+      log: ['Your Chicago trip was Sep 8–10, from your calendar',
+            'Matched 7 receipts in your mail to those dates',
+            'Found Finance’s address in your last expense report'],
+      draft: 'To: Finance\nSubject: Chicago trip receipts, Sep 8–10\n\nHi team, receipts from last week’s trip are attached. Hotel $612.18, flight $389.60, five Uber rides $86.40. Total $1,088.18.\n\nAttached: Hilton-folio.pdf, United-receipt.pdf',
+      when: 'Wednesday, 11:30 am',
+      reply: 'Finance replied: “Reimbursement approved: $1,088.18.”',
+      reasons: ['Finance approved the reimbursement', 'Nothing left to send'],
+      steps: [['It noticed', 'Your Chicago trip ended Sunday, and the receipts were sitting in your mail.'],
+              ['You asked, in four words', '“Send these to expenses.”'],
+              ['It filled in the rest', 'Matched 7 receipts to the trip, attached the hotel and flight PDFs, added up the rides, and used Finance’s address from your last report.'],
+              ['You tapped Send it', 'Nothing goes out before this.'],
+              ['It came back done', 'Finance approved $1,088.18. One more tap closed it.']],
+      knew: [['Chicago, Sep 8–10', 'your calendar'], ['7 receipts from the trip', 'your mail'],
+             ['Finance’s address', 'your last report'], ['How you write to Finance', 'your sent mail']]
+    }
+  };
+  const OTHERS = [
+    { t: 'RSVP to the Hendersons’ dinner', s: 'They asked twice. Saturday.', why: ['due', 'Due Sat'] },
+    { t: 'Milo’s fall soccer signup', s: 'Watching the league’s mail.', why: ['new', 'New'] }
+  ];
+
+  const root = document.getElementById('demo');
+  if (!root) return;
+  const q = id => document.getElementById(id);
+  const screen = q('d-screen'), rows = q('d-rows'), count = q('d-count'), closure = q('d-closure');
+  const chat = q('d-chat'), chips = q('d-chips'), field = q('d-field'), go = q('d-go'), finger = q('d-finger');
+  const tt = q('d-tt'), tm = q('d-tm'), knew = q('d-knew'), alt = q('d-alt');
+  const steps = [...q('d-steps').children];
+  const sw = [...root.querySelectorAll('.dswitch button')], pauseBtn = root.querySelector('.dpause');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let token = 0, paused = false, offscreen = false, pinned = null, cur = 'home';
+
+  // Time only passes while the phone is on screen, the tab is visible, and it isn't paused.
+  const sleep = async (ms, tk) => {
+    let left = ms;
+    while (left > 0) {
+      if (tk !== token) throw 'stop';
+      const step = Math.min(50, left);
+      await new Promise(r => setTimeout(r, step));
+      if (!paused && !offscreen && !document.hidden) left -= step;
+    }
+    if (tk !== token) throw 'stop';
+  };
+  const stage = i => steps.forEach((li, j) => {
+    li.classList.toggle('past', j < i);
+    if (j === i) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+  });
+  const add = (el, html) => {
+    const d = document.createElement('div'); d.innerHTML = html;
+    const n = d.firstElementChild; n.classList.add('rise'); el.appendChild(n); return n;
+  };
+  const empty = () => { field.innerHTML = '<span class="ph2">Ask it to do something…</span>'; go.classList.remove('live'); };
+  const rowHTML = (r, cls = '') => `<div class="brow ${cls}"><i class="gut"></i><div><div class="t">${esc(r.t)}</div>`
+    + `<div class="s">${esc(r.s)}</div></div><span class="why ${r.why[0]}">${esc(r.why[1])}</span></div>`;
+
+  function setStory(k) {
+    const s = S[k];
+    count.textContent = '6 loose ends · 2 need you';
+    closure.innerHTML = '';
+    rows.innerHTML = rowHTML(s.row, 'unseen story') + OTHERS.map(r => rowHTML(r)).join('');
+    tt.textContent = s.tt; tm.textContent = s.tm;
+    chat.innerHTML = '<div class="cempty"><p class="a">Ask it to do something</p><p class="b">It can look things up, work on your Mac, and draft emails or texts. Nothing is sent until you tap Send it.</p></div>';
+    chips.innerHTML = ''; empty();
+    steps.forEach((li, i) => { li.querySelector('b').textContent = s.steps[i][0]; li.querySelector('span').textContent = s.steps[i][1]; });
+    knew.innerHTML = s.knew.map(([a, b]) => `<li>${esc(a)} <span>· ${esc(b)}</span></li>`).join('');
+    alt.textContent = 'Example, ' + s.tt + ': ' + s.steps.map(x => x[0] + '. ' + x[1]).join(' ');
+    sw.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === k)));
+  }
+
+  // A fingertip that travels to the control, presses, and lifts.
+  async function tap(el, tk) {
+    const a = screen.getBoundingClientRect(), b = el.getBoundingClientRect();
+    const scale = a.width / screen.offsetWidth || 1;
+    finger.style.left = ((b.left - a.left + b.width / 2) / scale) + 'px';
+    finger.style.top = ((b.top - a.top + b.height / 2) / scale) + 'px';
+    finger.classList.add('on'); await sleep(560, tk);
+    finger.classList.add('press'); await sleep(140, tk);
+    finger.classList.remove('press'); await sleep(120, tk);
+  }
+  const lift = () => finger.classList.remove('on');
+
+  function still(k) {                 // the resting frame: done, and how it got there
+    const s = S[k]; setStory(k); lift();
+    screen.classList.add('at-thread', 'still');
+    rows.querySelector('.story').classList.remove('unseen');
+    chat.innerHTML = '';
+    add(chat, `<div class="ub">${esc(s.ask)}</div>`);
+    add(chat, `<div class="ab"><span class="h">Email sent</span>${esc(s.draft)}</div>`);
+    add(chat, `<p class="when">${esc(s.when)}</p>`);
+    add(chat, `<div class="ab">${esc(s.reply)}</div>`);
+    stage(5);
+  }
+
+  async function play(k, tk) {
+    const s = S[k];
+    screen.classList.remove('at-thread', 'still'); setStory(k); stage(0); lift();
+    await sleep(1400, tk);
+    const row = rows.querySelector('.story');
+    await tap(row, tk); row.classList.add('tapped'); await sleep(160, tk);
+    row.classList.remove('unseen', 'tapped'); lift(); screen.classList.add('at-thread');
+    await sleep(900, tk);
+
+    stage(1);
+    await tap(field, tk); lift();
+    for (let i = 1; i <= s.ask.length; i++) {
+      field.innerHTML = esc(s.ask.slice(0, i)) + '<span class="caret2"></span>';
+      go.classList.add('live');
+      await sleep(i === s.ask.length ? 300 : 55, tk);
+    }
+    await tap(go, tk); lift();
+    chat.innerHTML = ''; add(chat, `<div class="ub">${esc(s.ask)}</div>`); empty();
+    await sleep(500, tk);
+
+    stage(2);
+    const wk = add(chat, '<div class="wk"><div class="h"><i></i>Working on it…</div></div>');
+    for (const line of s.log) { add(wk, `<p class="l">${esc(line)}</p>`); await sleep(1150, tk); }
+    wk.remove();
+    const draft = add(chat, `<div class="ab"><span class="h">Email ready to send</span>${esc(s.draft)}</div>`);
+    await sleep(350, tk);
+    chips.innerHTML = '<span class="chip2 p">Send it</span><span class="chip2 s">Cancel</span>';
+
+    stage(3);
+    await sleep(1900, tk);
+    await tap(chips.firstElementChild, tk); lift();
+    chips.innerHTML = ''; add(chat, '<div class="ub">Send it</div>');
+    await sleep(550, tk);
+    draft.querySelector('.h').textContent = 'Email sent';
+    await sleep(1000, tk);
+
+    add(chat, `<p class="when">${esc(s.when)}</p>`); await sleep(450, tk);
+    add(chat, `<div class="ab">${esc(s.reply)}</div>`);
+    stage(4);
+    await sleep(2100, tk);
+    await tap(screen.querySelector('.tnav .back'), tk); lift();
+    screen.classList.remove('at-thread');
+    await sleep(500, tk);
+    closure.innerHTML = `<div class="ccard rise"><span class="k">LOOKS FINISHED?</span><span class="ct">${esc(s.tt)}</span>`
+      + s.reasons.map(r => `<span class="r">· ${esc(r)}</span>`).join('')
+      + '<div class="btns"><span class="cbtn yes">Yes, done</span><span class="cbtn no">Still open</span></div></div>';
+    await sleep(1500, tk);
+    await tap(closure.querySelector('.yes'), tk); lift();
+    closure.innerHTML = '';
+    rows.querySelector('.story').classList.add('closed');
+    count.textContent = '5 loose ends · 1 needs you';
+    await sleep(2800, tk);
+  }
+
+  async function loop() {
+    const tk = ++token;
+    if (reduce) { still(cur); return; }
+    try {
+      for (;;) {
+        await play(cur, tk);
+        if (!pinned) cur = cur === 'home' ? 'work' : 'home';
+      }
+    } catch (e) { if (e !== 'stop') throw e; }
+  }
+
+  function start() {
+    let saved = null;
+    try { saved = localStorage.getItem('le-demo'); } catch (e) {}
+    pinned = S[saved] ? saved : null;
+    cur = pinned || 'home';
+    still(cur);
+    if (reduce) return;
+    const tk = ++token;
+    sleep(1500, tk).then(loop, () => {});
+  }
+
+  sw.forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.s;
+    pinned = pinned === k ? null : k;          // tap the pinned one again to go back to taking turns
+    try { pinned ? localStorage.setItem('le-demo', pinned) : localStorage.removeItem('le-demo'); } catch (e) {}
+    cur = k; loop();
+  }));
+  pauseBtn.addEventListener('click', () => {
+    paused = !paused;
+    pauseBtn.setAttribute('aria-pressed', String(paused));
+    pauseBtn.setAttribute('aria-label', paused ? 'Play the example' : 'Pause the example');
+    pauseBtn.querySelector('.i-pause').toggleAttribute('hidden', paused);   // SVG has no .hidden property
+    pauseBtn.querySelector('.i-play').toggleAttribute('hidden', !paused);
+  });
+  new IntersectionObserver(es => { offscreen = !es[0].isIntersecting; }, { threshold: 0.25 })
+    .observe(root.querySelector('.phone-wrap'));
+
+  start();
 })();
 </script>
 </body>
