@@ -43,6 +43,8 @@
   .pill { display: inline-flex; align-items: center; font: 600 14px/1 var(--sans); padding: 10px 18px; border-radius: 100px; background: var(--brand); color: var(--on-brand); white-space: nowrap; }
   .pill:hover { text-decoration: none; filter: brightness(1.08); }
   .pill.big { font-size: 16px; padding: 14px 24px; }
+  .pill.soon { cursor: default; }
+  .pill.soon:hover { filter: none; }
 
   .hero { padding: 36px 0 72px; }
   .hero-mark { margin-bottom: 26px; }
@@ -273,14 +275,14 @@
   <div class="col">
     <nav class="nav">
       <a class="wordmark" href="./">Loose Ends</a>
-      <span class="links"><a href="#demo">How it works</a><a href="#private">Privacy</a><a href="https://github.com/jayjay28/loose-ends">Source</a><a class="pill" href="#install">Download</a></span>
+      <span class="links"><a href="#demo">How it works</a><a href="#private">Privacy</a><a href="https://github.com/jayjay28/loose-ends">Source</a><a class="pill" href="#install">Coming soon</a></span>
     </nav>
 
     <header class="hero">
       <div class="hero-mark"><svg class="spiral" viewBox="31.5 26.5 44 44" role="img" aria-label="Loose Ends"><path class="t" pathLength="1" d="M52 52C57 52 57 45 51 45C42 45 42 57 52 57C65 57 65 41 51 41C34 41 34 67 53 67C74 67 74 33 51 33"/><circle class="d" cx="51" cy="33" r="5.5"/></svg></div>
       <h1 class="headline">Stop holding it all <em>in your head.</em></h1>
       <p class="lede">You’re busy. Loose Ends already knows the context, handles the details, and waits for your instructions.</p>
-      <div class="ctas"><a class="pill big" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg">Download for macOS</a><a class="alt" href="app/">No Mac handy? Try the iPhone demo →</a></div>
+      <div class="ctas"><span class="pill big soon">Coming soon</span></div>
       <p class="quiet">Self-hosted on your own Mac. We never see your messages.</p>
     </header>
 
@@ -368,17 +370,12 @@
       </section>
 
       <section class="sec" id="install">
-        <h2>About ten minutes to set up.</h2>
-        <p>You need a Mac that stays on, an iPhone, and a free Google Gemini API key. The setup page walks you through getting one. Full prerequisites and the honest edges are in the <a href="https://github.com/jayjay28/loose-ends#readme">README</a>.</p>
+        <h2>Coming soon.</h2>
+        <p>Loose Ends isn’t available to download right now. When it’s back, you’ll need a Mac that stays on, an iPhone, and a free Google Gemini API key, and about ten minutes to set it up.</p>
         <div class="install-row">
-          <a class="pill big" id="dl-final" href="https://github.com/jayjay28/loose-ends/releases/latest/download/LooseEnds.pkg">Download for macOS</a>
-          <a class="iphone" href="app/"><img src="icon.png" alt=""><span>Loose Ends for iPhone<small>In TestFlight · full demo, no Mac needed</small></span></a>
+          <span class="pill big soon" id="dl-final">Coming soon</span>
+          <span class="iphone"><img src="icon.png" alt=""><span>Loose Ends for Mac and iPhone<small>Coming soon</small></span></span>
         </div>
-        <ol class="how">
-          <li><b>Open the installer.</b> It adds a menu bar app and the background engine, then opens the setup page in your browser.</li>
-          <li><b>Follow the setup page.</b> One permission for Messages and Mail, then your Gemini key. It checks each step by running it.</li>
-          <li><b>Scan the code with your iPhone.</b> One scan pairs your phone with your Mac.</li>
-        </ol>
       </section>
     </main>
 
