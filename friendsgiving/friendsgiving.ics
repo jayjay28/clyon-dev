@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//clyon.dev//Friendsgiving 2026//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:friendsgiving-2026@clyon.dev
+DTSTAMP:20261112T000000Z
+DTSTART:20261120T180000
+DTEND:20261121T000000
+SUMMARY:Friendsgiving & Game Night at the Jacksons
+LOCATION:We'll text you the address
+DESCRIPTION:Food\, games and good company. Details: https://clyon.dev/friendsgiving/
+URL:https://clyon.dev/friendsgiving/
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Friendsgiving & Game Night is tomorrow at 6pm
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Friendsgiving & Game Night at 6pm
+END:VALARM
+END:VEVENT
+END:VCALENDAR
