@@ -730,6 +730,11 @@ html, body { overflow-x: clip; }
 .cal { display: flex; flex-wrap: wrap; gap: 10px; }
 /* a scene scrolled out of view stops animating (the page script sets .offscreen) */
 .scene.offscreen, .scene.offscreen * { animation-play-state: paused !important; }
+/* people take turns moving: a resting one holds still where it is (the page script sets .rest). Lights, blinking and anything
+   that fades in and out (music notes, confetti, speech bubbles, steam: .keep) keep going, so nothing hangs in mid-air */
+.scene .rest:not(.keep), .scene .rest *:not(.eye):not(.bulb):not(.keep) { animation-play-state: paused !important; }
+/* off the side of a phone screen (.away): everything of theirs stops, it can't be seen anyway */
+.scene .away, .scene .away * { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .dish-pop, .dish-pop.show { transition: none; transform: none; } .scene .who .roll-l, .scene .who .roll-r, .scene .rollpin, .scene .bulb-halo { animation: none !important; } }
 /* deck:end */
 
@@ -2207,8 +2212,9 @@ html, body { overflow-x: clip; }
       if (a.dataset.tab === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
   }
-  window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
-  route();
+  const pageName = () => { const v = (location.hash || "").slice(1); return VIEWS.includes(v) ? v : "home"; };
+  window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); track("open_" + pageName()); });
+  route(); track("open_" + pageName());
 
   // ---------- static bits ----------
   function setFact(sel, val) { const el = $(sel); el.textContent = val || "To be confirmed"; el.classList.toggle("tbc", !val); }
@@ -2373,8 +2379,9 @@ html, body { overflow-x: clip; }
       busy = true; const ok = await saveAll(); busy = false;
       if (!ok) return;
     }
+    track("rsvp_" + FLOW.cur);
     if (i >= 0 && i < order.length - 1) showStep(order[i + 1]);
-    else { showDone(st, $("#f-name").value.trim(), steps.size.val, chosenCats(), $("#f-bring-what").value.trim()); window.scrollTo(0, 0); render(); }
+    else { track("rsvp_done_" + st); showDone(st, $("#f-name").value.trim(), steps.size.val, chosenCats(), $("#f-bring-what").value.trim()); window.scrollTo(0, 0); render(); }
   }
   function prevStep() { const steps = flowSteps(), i = steps.indexOf(FLOW.cur); if (i > 0) showStep(steps[i - 1]); }
   function showDone(status, name, size, cats, what) {
@@ -2388,6 +2395,8 @@ html, body { overflow-x: clip; }
   }
   $("#step-next").addEventListener("click", nextStep);
   $("#step-back").addEventListener("click", prevStep);
+  $("#cal-ics").addEventListener("click", () => track("add_calendar_apple"));
+  $("#cal-google").addEventListener("click", () => track("add_calendar_google"));
   $$('input[name="status"]').forEach((r) => r.addEventListener("click", () => setTimeout(nextStep, 240)));
   ["#f-name", "#f-phone", "#f-diet", "#f-bring-what"].forEach((sel) => $(sel).addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); nextStep(); } }));
   $("#rsvp-change").addEventListener("click", () => showStep("status"));
@@ -2501,7 +2510,21 @@ html, body { overflow-x: clip; }
   }
 
   // ---------- Firebase: used on clyon.dev (inside Claude the page uses Claude's own storage) ----------
+  // ---------- visit stats: Google Analytics, clyon.dev only. Loads after the page has drawn; skipped for the host ----------
+  const GA_ID = "";
+  function track(name) { (S.gaQ || (S.gaQ = [])).push(name); if (S.gaSend) S.gaSend(); }
+  function startStats(app) {
+    const go = () => import(FB_SDK + "firebase-analytics.js").then(async (G) => {
+      if (!(await G.isSupported())) return;
+      const ga = G.getAnalytics(app);
+      S.gaSend = () => { for (const n of S.gaQ.splice(0)) G.logEvent(ga, n); };
+      S.gaSend();
+    }).catch(() => {});
+    const later = () => setTimeout(go, 1500);
+    if (document.readyState === "complete") later(); else addEventListener("load", later, { once: true });
+  }
   const FB_CONFIG = {"apiKey": "AIzaSyDOTpQvHNRH-6CPmRBasE2wgd46FlQsAC4", "authDomain": "friendsgiving-clyon.firebaseapp.com", "projectId": "friendsgiving-clyon", "storageBucket": "friendsgiving-clyon.firebasestorage.app", "messagingSenderId": "102434762511", "appId": "1:102434762511:web:40383248c52934d0d7d87a"};
+  if (GA_ID) FB_CONFIG.measurementId = GA_ID;
   const FB_SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
   async function firebaseBackend() {
     const [{ initializeApp }, A, F] = await Promise.all(["firebase-app.js", "firebase-auth.js", "firebase-firestore.js"].map((f) => import(FB_SDK + f)));
@@ -2517,6 +2540,7 @@ html, body { overflow-x: clip; }
     if (!u) { try { u = (await A.signInAnonymously(auth)).user; } catch (e) { console.warn("Guest sign-in failed; the page is read-only.", e); } }
     let isOwner = false;
     if (u && u.email) { try { await F.getDoc(F.doc(fs, "meta", "host")); isOwner = true; } catch (e) { isOwner = false; } }
+    if (GA_ID && !isOwner) startStats(app);
     const wrap = (snap) => ({ docs: snap.docs.map((d) => ({ id: d.id, data: () => d.data() })), metadata: { fromCache: snap.metadata.fromCache } });
     const db = {
       collection: (name) => ({
@@ -2727,6 +2751,67 @@ document.querySelectorAll(".scene.sketch").forEach((fig) => {
   later();
 });
 // deck:end
+
+// Scenes: people take turns moving. Phones spent most of their time redrawing ~300 moving parts at once, so only about a
+// third of the people (and decorations) move at any moment, each for 4 s out of every 12 s, swapping one at a time.
+// Anyone off the sides of a phone screen holds still until swiped into view. String lights, blinking, and anything that
+// fades in and out (music notes, confetti, speech bubbles) always run, so nothing freezes in mid-air.
+(() => {
+  if (!("IntersectionObserver" in window) || !Element.prototype.getAnimations) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const TURN = 4000, GROUPS = 3;
+  const loops = (a) => a.effect && a.effect.target && a.effect.getComputedTiming().iterations === Infinity;
+  document.querySelectorAll(".scene.sketch").forEach((scene) => {
+    const pan = scene.querySelector(".scene-pan");
+    let actors = [], seen = new WeakMap(), timer = 0;
+    function findActors() {
+      const set = new Set();
+      for (const a of scene.getAnimations({ subtree: true }).filter(loops)) {
+        const t = a.effect.target;
+        if (t.closest(".eye, .bulb")) continue;                       // always on
+        if (a.effect.getKeyframes().some((k) => "opacity" in k)) { t.classList.add("keep"); continue; }   // never frozen mid-air
+        let top = null;
+        for (let e = t; e && e !== scene; e = e.parentElement) if (e.classList && e.classList.contains("who")) top = e;
+        if (!top) {                                                   // a decoration: its biggest group that holds no person and nothing that pops in
+          top = t;
+          for (let p = t.parentElement; p && p !== scene && p.tagName.toLowerCase() !== "svg" && !p.classList.contains("ink-root")
+               && !p.classList.contains("pop-in") && !p.querySelector(".who, .pop-in"); p = p.parentElement) top = p;
+        }
+        set.add(top);
+      }
+      const list = [...set].map((el) => ({ el, x: el.getBoundingClientRect().left }));
+      list.sort((a, b) => a.x - b.x);                                 // left to right, so neighbours take different turns
+      return list.map(({ el }, i) => ({ el, offset: (i % GROUPS) * TURN + ((i * 1370) % TURN) }));
+    }
+    const vis = pan ? new IntersectionObserver((es) => { for (const e of es) seen.set(e.target, e.isIntersecting); }, { root: pan }) : null;
+    function tick() {
+      const now = performance.now();
+      for (const a of actors) {
+        if (now < a.ready) continue;                                  // still walking in or appearing: never frozen halfway
+        const myTurn = (now + a.offset) % (GROUPS * TURN) < TURN, away = seen.get(a.el) === false;
+        a.el.classList.toggle("rest", !myTurn || away);
+        a.el.classList.toggle("away", away);                          // off the side of a phone screen: everything stops, even notes
+      }
+    }
+    function start() {
+      stop();
+      if (!actors.length) { actors = findActors(); if (vis) actors.forEach((a) => vis.observe(a.el)); }
+      const now = performance.now();
+      for (const a of actors) {                                       // when this one's own entrance (if any) is over
+        const once = a.el.getAnimations({ subtree: true }).filter((x) => !loops(x));
+        a.ready = now + Math.max(0, ...once.map((x) => (x.effect.getComputedTiming().endTime || 0) - (x.currentTime || 0))) + 50;
+      }
+      tick(); timer = setInterval(tick, 500);
+    }
+    function stop() { clearInterval(timer); timer = 0; }
+    new IntersectionObserver((es) => {
+      for (const e of es) {
+        if (e.isIntersecting) { actors.forEach((a) => a.el.classList.remove("rest", "away")); start(); }   // a page shown again replays its opening
+        else stop();
+      }
+    }).observe(scene);
+  });
+})();
 
 // Sketches: add a faint second pass to the main lines. On laptops the lines wobble while a drawing appears, then the
 // wobble filter comes off. Phones never get it: redrawing the scene through it every frame made them slow.
