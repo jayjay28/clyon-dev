@@ -2835,6 +2835,8 @@ document.querySelectorAll(".scene.sketch").forEach((fig) => {
   }
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  // Safari draws this filter on the CPU, so the whole scene stuttered while it ran (2026-11-13). Safari keeps still lines.
+  if (/AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg|FxiOS|Firefox/.test(navigator.userAgent)) return;
   const roots = Array.from(document.querySelectorAll(".sketch .ink-root, .sweep .ink-root"));
   let frame = 0, until = 0, timer = null;
   function tick() {
