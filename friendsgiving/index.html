@@ -228,6 +228,22 @@ textarea { min-height: 84px; resize: vertical; }
 .bring-group li.me b { color: var(--accent); }
 .bring-group .none { color: var(--muted); padding: 10px 0; border-top: 1px solid var(--line); margin: 0; }
 #bring-cta { justify-self: start; }
+/* Bring page: the sign-up list */
+.bring-list { display: grid; gap: 26px; }
+.bring-sec { display: grid; gap: 10px; }
+.bring-sec h3 { margin: 0; }
+.bring-sec ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 14px; padding: 14px 16px; border: 2px solid var(--line); border-radius: 16px; background: var(--surface); }
+.item.mine { border-color: var(--fg); box-shadow: 4px 4px 0 var(--shade); }
+.item b { display: block; font-size: 1.12rem; font-weight: 600; }
+.item small { display: block; color: var(--muted); font-size: .92rem; line-height: 1.35; }
+.item .who { grid-column: 1 / -1; margin: 0; font-size: .95rem; overflow-wrap: anywhere; }
+.item .who.none { color: var(--muted); }
+.item .take { min-height: 40px; padding: 0 16px; font-size: .95rem; }
+.item .take[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.chip-sec { display: grid; gap: 4px; }
+.chip-sec .chips { margin-top: 0; }
+#done-bring { margin-top: 2px; }
 .sub { font-weight: 500; margin-top: 6px; }
 /* RSVP: one question at a time */
 .eyebrow { font: 600 .82rem/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 0; }
@@ -1925,16 +1941,12 @@ html, body { overflow-x: clip; }
               </div>
             </div>
           </div>
-          <div class="step" data-q="extras" hidden>
-            <h3 class="q" tabindex="-1" id="q-bring">Want to bring something?</h3>
-            <p class="hint">Not expected, always appreciated. No pork or shellfish, please.</p>
-            <div class="choices" role="group" aria-labelledby="q-bring">
-              <label class="choice"><input type="checkbox" name="bringing" value="alcohol"><span><b>Alcohol</b><small>Wine, beer, rum, a mixer</small></span></label>
-              <label class="choice"><input type="checkbox" name="bringing" value="snacks"><span><b>Snacks</b><small>Chips, dips, sweets</small></span></label>
-              <label class="choice"><input type="checkbox" name="bringing" value="food"><span><b>Food</b><small>A side or something to share</small></span></label>
-            </div>
-            <label class="sub" for="f-bring-what">Anything in mind?</label>
-            <input id="f-bring-what" class="big" type="text" maxlength="120" placeholder="Rum and plantain chips">
+          <div class="step" data-q="bring" hidden>
+            <h3 class="q" tabindex="-1" id="q-bring">Can you bring something?</h3>
+            <p class="hint">Tap anything you can bring. No pork or shellfish, please.</p>
+            <div id="item-chips"></div>
+            <label class="sub" for="f-bring-what">Something else?</label>
+            <input id="f-bring-what" class="big" type="text" maxlength="120" placeholder="Anything not on the list">
           </div>
           <div class="step" data-q="diet" hidden>
             <h3 class="q" tabindex="-1"><label for="f-diet">Any allergies?</label></h3>
@@ -1963,7 +1975,7 @@ html, body { overflow-x: clip; }
         <a class="btn" href="friendsgiving.ics" id="cal-ics">Add to calendar</a>
         <a class="btn ghost" id="cal-google" target="_blank" rel="noopener" aria-label="Add to Google Calendar" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Friendsgiving%20%26%20Game%20Night%20at%20the%20Jacksons&amp;dates=20261120T180000%2F20261121T000000&amp;details=Food%2C%20games%20and%20good%20company.%20Details%3A%20https%3A%2F%2Fclyon.dev%2Ffriendsgiving%2F&amp;location=We%27ll%20text%20you%20the%20address">Google Calendar</a>
       </div>
-      <div class="actions"><button type="button" class="btn ghost" id="rsvp-change">Change my RSVP</button><a class="btn ghost" href="#home">See who's coming</a></div>
+      <div class="actions"><a class="btn ghost" href="#bring" id="done-bring">See the bring list</a><button type="button" class="btn ghost" id="rsvp-change">Change my RSVP</button><a class="btn ghost" href="#home">See who's coming</a></div>
     </div>
     <div class="guests rsvp-extra">
       <h3>Who's coming</h3>
@@ -1979,7 +1991,7 @@ html, body { overflow-x: clip; }
 
   <section class="view" data-view="bring" aria-labelledby="bring-h" hidden>
     <h2 id="bring-h">Bring something</h2>
-    <p class="muted">Dinner and dessert are on us. Want to add something? Here's what's already coming.</p>
+    <p class="muted">We've got the main dishes and dessert. Can you help with one of these? Tap one to sign up.</p>
     <!-- rules:start -->
     <figure class="house-rules sketch" aria-hidden="true"><svg viewBox="0 0 420 206" focusable="false">
 <g class="ink-root">
@@ -2030,8 +2042,9 @@ html, body { overflow-x: clip; }
     <p class="sr-only">House rule: no pork or shellfish, please.</p>
     <!-- rules:end -->
     <p class="access" hidden></p>
-    <div class="bringing" id="bringing"></div>
-    <a class="btn" href="#rsvp" id="bring-cta">I'll bring something</a>
+    <div class="bring-list" id="bring-list"></div>
+    <div class="bring-group" id="bring-other" hidden><h3>Something else</h3><ul id="bringing"></ul></div>
+    <a class="btn ghost" href="#rsvp" id="bring-cta">Bring something else</a>
   </section>
 
   <section class="view" data-view="host" aria-labelledby="host-h" hidden>
@@ -2067,8 +2080,27 @@ html, body { overflow-x: clip; }
   };
   const CATS = { alcohol: "Alcohol", snacks: "Snacks", food: "Food" };
   const CAT_KEYS = Object.keys(CATS);
+  // What guests can sign up to bring (Bring page and the RSVP). Stored on each guest's RSVP as bring: [{ key }].
+  const ITEMS = [
+    { key: "sushi", group: "Food", name: "Sushi plate", short: "a sushi plate", note: "Salmon, tuna or avocado rolls. No shrimp, crab or California rolls." },
+    { key: "wings", group: "Food", name: "Wings", short: "wings", note: "Pick your favourite wing spot and bring it." },
+    { key: "patties", group: "Food", name: "Patties", short: "patties", note: "A box from your favourite Jamaican bakery. Beef, chicken or veggie. Coco bread is a plus." },
+    { key: "salad", group: "Food", name: "Salad", short: "a salad", note: "A big green salad or coleslaw." },
+    { key: "fruit", group: "Food", name: "Fruit platter", short: "a fruit platter", note: "Pineapple, mango and grapes, already cut." },
+    { key: "chips", group: "Food", name: "Chips and dips", short: "chips and dips", note: "Plantain chips, guacamole or salsa." },
+    { key: "sorrel", group: "Drinks", name: "Sorrel", short: "sorrel", note: "Homemade or bought." },
+    { key: "rum", group: "Drinks", name: "Rum", short: "rum", note: "A bottle plus mixers, or a jug of rum punch." },
+    { key: "wine", group: "Drinks", name: "Wine", short: "wine", note: "Red or white." },
+    { key: "beer", group: "Drinks", name: "Beer", short: "beer", note: "Red Stripe or your favourite." },
+    { key: "soda", group: "Drinks", name: "Soft drinks", short: "soft drinks", note: "Ginger beer, Ting, and juice boxes for the kids." },
+    { key: "ice", group: "Drinks", name: "Ice", short: "ice", note: "2 bags." }
+  ];
+  const ITEM = Object.fromEntries(ITEMS.map((i) => [i.key, i]));
+  const BRING_GROUPS = [...new Set(ITEMS.map((i) => i.group))];
   const andList = (xs) => xs.length <= 2 ? xs.join(" and ") : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
-  const bringLine = (cats, what) => cats.length ? "Thanks for bringing " + (what || andList(cats.map((k) => CATS[k].toLowerCase()))) + "!" : "";
+  const bringLine = (items, what) => { const xs = items.map((k) => ITEM[k].short).concat(what ? [what] : []); return xs.length ? "Thanks for bringing " + andList(xs) + "!" : ""; };
+  // the old Alcohol / Snacks / Food answers, as text, so they show and survive the next save
+  const oldBring = (g) => g.bringWhat || g.bringing.map((k) => CATS[k]).join(", ");
   const VIEWS = ["home", "menu", "rsvp", "bring", "host"];
 
   const $ = (s) => document.querySelector(s);
@@ -2112,6 +2144,7 @@ html, body { overflow-x: clip; }
       wall: str(d.wall, 500).trim(),
       bringing: Array.isArray(d.bringing) ? CAT_KEYS.filter((k) => d.bringing.includes(k)) : [],
       bringWhat: str(d.bringWhat, 120).trim(),
+      items: Array.isArray(d.bring) ? ITEMS.map((i) => i.key).filter((k) => d.bring.some((b) => b && b.key === k)) : [],
       updatedAt: str(d.updatedAt, 40),
       bring: Array.isArray(d.bring)
         ? d.bring.filter((b) => b && typeof b === "object").slice(0, 30)
@@ -2309,7 +2342,8 @@ html, body { overflow-x: clip; }
         d.name = name.slice(0, 60); d.status = status; d.size = status === "no" ? 1 : steps.size.val;
         d.phone = $("#f-phone").value.trim().slice(0, 30);
         d.diet = $("#f-diet").value.trim().slice(0, 200);
-        d.bringing = status === "no" ? [] : chosenCats(); d.bringWhat = status === "no" ? "" : $("#f-bring-what").value.trim().slice(0, 120);
+        d.bringing = []; d.bringWhat = status === "no" ? "" : $("#f-bring-what").value.trim().slice(0, 120);
+        d.bring = status === "no" ? [] : chosenItems().map((key) => ({ key }));
         d.note = onlyHost ? text : ""; d.wall = onlyHost ? "" : text;
       });
       setMsg("#rsvp-msg", ""); FLOW.saved = true; return true;
@@ -2322,10 +2356,15 @@ html, body { overflow-x: clip; }
   const FLOW = { cur: "status" };
   const rsvpView = $('[data-view="rsvp"]');
   // Are you coming? -> name and number (the RSVP is saved here) -> party size and what you're bringing -> food needs -> a note (one question per screen)
-  function flowSteps() { return chosenStatus() === "no" ? ["status", "name", "note"] : ["status", "name", "extras", "diet", "note"]; }
+  function flowSteps() { return chosenStatus() === "no" ? ["status", "name", "note"] : ["status", "name", "extras", "bring", "diet", "note"]; }
   const okPhone = (v) => { const n = v.replace(/\D/g, ""); return n.length >= 7 && n.length <= 15; };
   const savedMine = () => { const m = S.myId ? clean(S.myId, S.guests.get(S.myId)) : null; return m && m.status ? m : null; };
-  const chosenCats = () => $$('input[name="bringing"]:checked').map((c) => c.value);
+  const chosenItems = () => $$('input[name="item"]:checked').map((c) => c.value);
+  const itemBox = (key) => document.querySelector(`input[name="item"][value="${key}"]`);
+  // the item chips on the RSVP's bring screen, one row per group
+  $("#item-chips").replaceChildren(...BRING_GROUPS.map((grp) => h("div", { class: "chip-sec" }, h("p", { class: "sub", text: grp }),
+    h("div", { class: "chips", role: "group", "aria-label": grp }, ITEMS.filter((i) => i.group === grp).map((i) =>
+      h("label", { class: "chip" }, h("input", { type: "checkbox", name: "item", value: i.key }), h("span", { text: i.name })))))));
   function showStep(name, focus = true) {
     FLOW.cur = name;
     if (name === "note") {   // someone who can't make it isn't asked about bringing a game
@@ -2369,14 +2408,15 @@ html, body { overflow-x: clip; }
     }
     track("rsvp_" + FLOW.cur);
     if (i >= 0 && i < order.length - 1) showStep(order[i + 1]);
-    else { track("rsvp_done_" + st); showDone(st, $("#f-name").value.trim(), steps.size.val, chosenCats(), $("#f-bring-what").value.trim()); window.scrollTo(0, 0); render(); }
+    else { track("rsvp_done_" + st); showDone(st, $("#f-name").value.trim(), steps.size.val, chosenItems(), $("#f-bring-what").value.trim()); window.scrollTo(0, 0); render(); }
   }
   function prevStep() { const steps = flowSteps(), i = steps.indexOf(FLOW.cur); if (i > 0) showStep(steps[i - 1]); }
-  function showDone(status, name, size, cats, what) {
+  function showDone(status, name, size, items, what) {
     $("#rsvp-flow").hidden = true; $("#rsvp-done").hidden = false; rsvpView.classList.remove("flowing");
     const first = (name || "").split(" ")[0];
     $("#done-h").textContent = status === "yes" ? `You're in${first ? ", " + first : ""}!` : status === "maybe" ? "Maybe it is" : "We'll miss you";
-    const brings = status === "no" ? "" : " " + bringLine(cats || [], what || "");
+    const brings = status === "no" ? "" : " " + bringLine(items || [], what || "");
+    $("#done-bring").hidden = status === "no";
     $("#done-text").textContent = (status === "yes" ? (size > 1 ? `You plus ${size - 1}. ` : "") + "See you Friday the 20th at 6pm. We'll text you the address."
       : status === "maybe" ? "Let us know when you're sure. We'll text you the address either way." : "Thanks for letting us know.") + brings;
     $("#done-cal").hidden = status === "no";
@@ -2393,19 +2433,42 @@ html, body { overflow-x: clip; }
   // ---------- Bring page: what everyone is bringing ----------
   $("#bring-cta").addEventListener("click", () => setTimeout(() => {
     const m = S.myId ? clean(S.myId, S.guests.get(S.myId)) : null;
-    showStep(m && m.status && m.status !== "no" ? "extras" : "status");
+    showStep(m && m.status && m.status !== "no" ? "bring" : "status");
   }, 0));
   function renderBringing(gs) {
-    const box = $("#bringing"); box.replaceChildren();
     const going = gs.filter((g) => g.status === "yes" || g.status === "maybe");
-    for (const k of CAT_KEYS) {
-      const who = going.filter((g) => g.bringing.includes(k));
-      const rows = who.map((g) => h("li", { class: g.id === S.myId ? "me" : "" }, h("b", { text: nameFor(g) }), g.bringWhat ? h("span", { text: " · " + g.bringWhat }) : null));
-      box.append(h("div", { class: "bring-group" }, h("h3", { text: CATS[k] }),
-        rows.length ? h("ul", {}, rows) : h("p", { class: "none", text: S.gotG ? "Nobody yet." : waitingText("list") })));
+    $("#bring-list").replaceChildren(...BRING_GROUPS.map((grp) => h("section", { class: "bring-sec" }, h("h3", { text: grp }),
+      h("ul", {}, ITEMS.filter((i) => i.group === grp).map((i) => {
+        const who = going.filter((g) => g.items.includes(i.key)), mine = who.some((g) => g.id === S.myId);
+        return h("li", { class: "item" + (mine ? " mine" : "") },
+          h("div", {}, h("b", { text: i.name }), h("small", { text: i.note })),
+          h("button", { type: "button", class: "btn small ghost take", "aria-pressed": mine ? "true" : "false", "aria-label": (mine ? "Stop bringing " : "Bring ") + i.name,
+            disabled: !writable(), text: mine ? "\u2713 Bringing" : who.length ? "Me too" : "I'll bring it", onclick: (e) => toggleItem(i.key, e.currentTarget) }),
+          h("p", { class: "who" + (who.length ? "" : " none"), text: who.length ? "Bringing: " + joinNames(who) : S.gotG ? "Nobody yet" : waitingText("list") }));
+      })))));
+    const other = going.filter((g) => oldBring(g));
+    $("#bringing").replaceChildren(...other.map((g) => h("li", { class: g.id === S.myId ? "me" : "" }, h("b", { text: nameFor(g) }), h("span", { text: " · " + oldBring(g) }))));
+    $("#bring-other").hidden = !other.length;
+  }
+  // Bring page: one tap signs you up (or off). Someone who hasn't said they're coming RSVPs first, with the item already ticked.
+  async function toggleItem(key, btn) {
+    const m = savedMine(), box = itemBox(key);
+    if (!m || m.status === "no") {
+      if (box) box.checked = true;
+      location.hash = "#rsvp"; setTimeout(() => showStep("status"), 0);
+      toast(m ? "Change your RSVP to coming and it's saved." : "RSVP first and it's saved.");
+      return;
     }
-    const mine = S.myId ? gs.find((g) => g.id === S.myId) : null;
-    $("#bring-cta").textContent = mine && mine.bringing.length ? "Change what you're bringing" : "I'll bring something";
+    if (!writable()) return;
+    const on = !m.items.includes(key);
+    if (box) box.checked = on;
+    btn.disabled = true;
+    try {
+      await saveMine((d) => { const keys = clean(S.myId, d).items.filter((k) => k !== key); if (on) keys.push(key); d.bring = keys.map((k) => ({ key: k })); });
+      toast(on ? "Thanks! You're bringing " + ITEM[key].short + "." : "Taken off your list.");
+      track("bring_" + key + (on ? "" : "_off"));
+    } catch (err) { if (box) box.checked = !on; onSaveError(err); }
+    finally { btn.disabled = !writable(); }
   }
 
   // ---------- fill my saved answers once ----------
@@ -2419,9 +2482,9 @@ html, body { overflow-x: clip; }
     $("#f-diet").value = d.diet;
     $("#f-phone").value = d.phone;
     $("#f-note").value = d.wall || d.note; $("#f-private").checked = !d.wall && !!d.note;
-    $$('input[name="bringing"]').forEach((c) => { c.checked = d.bringing.includes(c.value); });
-    $("#f-bring-what").value = d.bringWhat;
-    if (d.status) showDone(d.status, d.name, d.size, d.bringing, d.bringWhat);
+    $$('input[name="item"]').forEach((c) => { c.checked = d.items.includes(c.value); });
+    $("#f-bring-what").value = oldBring(d);
+    if (d.status) showDone(d.status, d.name, d.size, d.items, oldBring(d));
   }
 
   // ---------- render ----------
@@ -2551,7 +2614,7 @@ html, body { overflow-x: clip; }
         return {
           set: async (b) => {
             const pub = {};
-            for (const k of ["name", "status", "size", "wall", "bringing", "bringWhat", "updatedAt"]) if (b[k] !== undefined) pub[k] = b[k];
+            for (const k of ["name", "status", "size", "wall", "bringing", "bringWhat", "bring", "updatedAt"]) if (b[k] !== undefined) pub[k] = b[k];
             await F.setDoc(F.doc(fs, "guests", id), pub);
             await F.setDoc(F.doc(fs, "private", id), { diet: String(b.diet || "").slice(0, 200), note: String(b.note || "").slice(0, 500), phone: String(b.phone || "").slice(0, 30) });
           },
